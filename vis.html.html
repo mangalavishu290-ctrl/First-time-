@@ -1,0 +1,435 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dual-Mode Dashboard: App & Game</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --danger: #f43f5e;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        /* Productivity App Styles */
+        .timer-display {
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            margin: 1rem 0;
+            color: var(--accent);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        button {
+            background-color: var(--accent);
+            color: var(--bg-color);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button.secondary {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+
+        button.secondary:hover {
+            background-color: var(--border);
+        }
+
+        .task-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 0.6rem 1rem;
+            color: var(--text-main);
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent);
+        }
+
+        .task-list {
+            list-style: none;
+            max-height: 180px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .task-item {
+            background-color: var(--bg-color);
+            padding: 0.6rem 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border);
+        }
+
+        .task-item.completed span {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.2rem;
+        }
+
+        .icon-btn:hover {
+            color: var(--danger);
+        }
+
+        /* Game Styles */
+        .game-status {
+            text-align: center;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            aspect-ratio: 1;
+            margin-bottom: 1rem;
+        }
+
+        .cell {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .cell:hover {
+            background-color: #273548;
+        }
+
+        .cell.x { color: var(--accent); }
+        .cell.o { color: var(--danger); }
+
+        footer {
+            margin-top: 3rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+      <h1>Productivity & Play Hub</h1>
+      <p>A unified workspace featuring a Pomodoro Task Application and a Classic Arcade Game.</p>
+    </header>
+
+    <div class="container">
+        <!-- APPLICATION CARD: Pomodoro & Task Manager -->
+        <div class="card">
+            <h2>⏱️ Focus & Task App</h2>
+            <div class="timer-display" id="timer">25:00</div>
+            <div class="btn-group">
+                <button id="startTimer">Start</button>
+                <button class="secondary" id="resetTimer">Reset</button>
+            </div>
+
+            <div class="task-input-group">
+                <input type="text" id="taskInput" placeholder="Add a new task...">
+                <button id="addTask">Add</button>
+            </div>
+            <ul class="task-list" id="taskList">
+                <!-- Dynamic tasks will go here -->
+            </ul>
+        </div>
+
+        <!-- GAME CARD: Tic-Tac-Toe -->
+        <div class="card">
+            <h2>🎮 Quick Mini-Game</h2>
+            <div class="game-status" id="gameStatus">Player X's Turn</div>
+            <div class="board" id="gameBoard">
+                <div class="cell" data-index="0"></div>
+                <div class="cell" data-index="1"></div>
+                <div class="cell" data-index="2"></div>
+                <div class="cell" data-index="3"></div>
+                <div class="cell" data-index="4"></div>
+                <div class="cell" data-index="5"></div>
+                <div class="cell" data-index="6"></div>
+                <div class="cell" data-index="7"></div>
+                <div class="cell" data-index="8"></div>
+            </div>
+            <button class="secondary" id="resetGame">Restart Game</button>
+        </div>
+    </div>
+
+    <footer>
+        Fully responsive single-file template with embedded CSS and JavaScript.
+    </footer>
+
+    <script>
+        /* --- POMODORO TIMER LOGIC --- */
+        let timeLeft = 1500;
+        let timerInterval = null;
+        let isRunning = false;
+
+        const timerDisplay = document.getElementById('timer');
+        const startTimerBtn = document.getElementById('startTimer');
+        const resetTimerBtn = document.getElementById('resetTimer');
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        startTimerBtn.addEventListener('click', () => {
+            if (!isRunning) {
+                isRunning = true;
+                startTimerBtn.textContent = 'Pause';
+                timerInterval = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                        startTimerBtn.textContent = 'Start';
+                        alert('Focus session complete! Take a break.');
+                    }
+                }, 1000);
+            } else {
+                clearInterval(timerInterval);
+                isRunning = false;
+                startTimerBtn.textContent = 'Start';
+            }
+        });
+
+        resetTimerBtn.addEventListener('click', () => {
+            clearInterval(timerInterval);
+            isRunning = false;
+            timeLeft = 1500;
+            startTimerBtn.textContent = 'Start';
+            updateTimerDisplay();
+        });
+
+        /* --- TASK MANAGER LOGIC --- */
+        const taskInput = document.getElementById('taskInput');
+        const addTaskBtn = document.getElementById('addTask');
+        const taskList = document.getElementById('taskList');
+
+        function createNewTask() {
+            const text = taskInput.value.trim();
+            if (!text) return;
+
+            const li = document.createElement('li');
+            li.className = 'task-item';
+            li.innerHTML = `
+                <span>${text}</span>
+                <div class="task-actions">
+                    <button class="icon-btn complete-btn">✓</button>
+                    <button class="icon-btn delete-btn">✕</button>
+                </div>
+            `;
+
+            li.querySelector('.complete-btn').addEventListener('click', () => {
+                li.classList.toggle('completed');
+            });
+
+            li.querySelector('.delete-btn').addEventListener('click', () => {
+                li.remove();
+            });
+
+            taskList.appendChild(li);
+            taskInput.value = '';
+        }
+
+        addTaskBtn.addEventListener('click', createNewTask);
+        taskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') createNewTask();
+        });
+
+        /* --- TIC-TAC-TOE GAME LOGIC --- */
+        const boardElement = document.getElementById('gameBoard');
+        const gameStatus = document.getElementById('gameStatus');
+        const resetGameBtn = document.getElementById('resetGame');
+        
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let isGameActive = true;
+
+        const winningConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+
+        function handleCellClick(e) {
+            const cell = e.target;
+            const index = cell.getAttribute('data-index');
+
+            if (board[index] !== '' || !isGameActive) return;
+
+            board[index] = currentPlayer;
+            cell.textContent = currentPlayer;
+            cell.classList.add(currentPlayer.toLowerCase());
+
+            checkResultValidation();
+        }
+
+        function checkResultValidation() {
+            let roundWon = false;
+            for (let i = 0; i < winningConditions.length; i++) {
+                const [a, b, c] = winningConditions[i];
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    roundWon = true;
+                    break;
+                }
+            }
+
+            if (roundWon) {
+                gameStatus.textContent = `Player ${currentPlayer} Wins! 🎉`;
+                isGameActive = false;
+                return;
+            }
+
+            if (!board.includes('')) {
+                gameStatus.textContent = `It's a Draw! 🤝`;
+                isGameActive = false;
+                return;
+            }
+
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            gameStatus.textContent = `Player ${currentPlayer}'s Turn`;
+        }
+
+        boardElement.querySelectorAll('.cell').forEach(cell => {
+            cell.addEventListener('click', handleCellClick);
+        });
+
+        resetGameBtn.addEventListener('click', () => {
+            board = ['', '', '', '', '', '', '', '', ''];
+            isGameActive = true;
+            currentPlayer = 'X';
+            gameStatus.textContent = `Player ${currentPlayer}'s Turn`;
+            boardElement.querySelectorAll('.cell').forEach(cell => {
+                cell.textContent = '';
+                cell.className = 'cell';
+            });
+        });
+    </script>
+</body>
+</html>
